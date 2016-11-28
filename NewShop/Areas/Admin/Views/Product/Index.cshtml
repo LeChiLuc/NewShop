@@ -3,8 +3,10 @@
     ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-  <!-- Content Header (Page header) -->
+@section Script{
+    <script src="~/Assets/admin/js/homeController/homeController.js"></script>
+    }
+<!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
         Blank page
@@ -36,6 +38,16 @@
                 <div class="box-header">
                     <button id="btnAddNew" class="btn btn-success">Thêm mới</button>
                 </div>
+                <input style="width:400px" type="text" class="form-control" id="txtNameS" placeholder="Type name" />
+
+                <select class="form-control" id="ddlStatusS">
+                    <option value="">All</option>
+                    <option value="true">Active</option>
+                    <option value="false">Locked</option>
+                </select>
+                <button class="btn btn-primary" id="btnSearch">Search</button>
+                <button class="btn btn-default" id="btnReset">Reset</button>
+
                 <!-- /.box-header -->
                 <div class="box-body">
                     <table id="example1" class="table table-bordered table-striped">
@@ -45,11 +57,10 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Salary</th>
                                 <th>Status</th>
+                                <th>#</th>
                             </tr>
-                        </thead>   
-                        <tbody id="tblData">
-
-                        </tbody>                
+                        </thead>
+                        <tbody id="tblData"></tbody>
                     </table>
                     <div id="pagination" class="pagination">
 
@@ -58,8 +69,12 @@
                         <tr>
                             <td>{{ID}}</td>
                             <td>{{Name}}</td>
-                            <td><input type="number" class="txtSalary" data-id="{{ID}}" value="{{Price}}"/></td>
+                            <td><input type="number" class="txtSalary" data-id="{{ID}}" value="{{Price}}" /></td>
                             <td>{{{Status}}}</td>
+                            <td>
+                                <button class="btn btn-primary btn-edit" data-id="{{ID}}">Edit</button>
+                                <button class="btn btn-danger btn-delete" data-id="{{ID}}">Delete</button>
+                            </td>
                         </tr>
                     </script>
                 </div>
@@ -79,7 +94,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dissmiss="modal"&times;></button>
+                <button type="button" class="close" data-dissmiss="modal" &times;></button>
                 <h4 class="modal-title">Add/Update Product</h4>
             </div>
             <div class="modal-body">
@@ -87,7 +102,7 @@
                     <div class="form-group">
                         <label for="txtName">Name:</label>
                         <input type="text" class="form-control" id="txtName">
-                        <input type="hidden" id="hidID" value="0"/>
+                        <input type="hidden" id="hidID" value="0" />
                     </div>
                     <div class="form-group">
                         <label for="txtCode">Code:</label>
@@ -104,6 +119,7 @@
                     <div class="form-group">
                         <label for="txtImage">Image:</label>
                         <input type="text" class="form-control" id="txtImage">
+                        <button type="button" id="btnSelectImage">Chọn ảnh</button>
                     </div>
                     <div class="form-group">
                         <label for="txtMoreImages">MoreImages:</label>

@@ -18,7 +18,19 @@ var homeController = {
                 homeController.updateSalary(id, value);
             }
         });
-
+        $('#txtNameS').off('keypress').on('keypress', function (e) {
+            if (e.which == 13) {
+                homeController.loadData(true);
+            }
+        });
+        $('#btnSelectImage').off('click').on('click', function (e) {
+            e.preventDefault();
+            var finder = new CKFinder();
+            finder.selectActionFunction = function (url) {
+                $('#txtImage').val(url);
+            };
+            finder.popup();
+        });
         $('#btnAddNew').off('click').on('click', function () {
             $('#modalAddUpdate').modal('show');
             homeController.resetForm();
@@ -26,6 +38,50 @@ var homeController = {
         $('#btnSave').off('click').on('click', function () {
             homeController.saveData();
         });
+        $('#btnSearch').off('click').on('click', function () {
+            homeController.loadData(true);
+        });
+        $('#btnReset').off('click').on('click', function () {
+            $('#txtNameS').val('');
+            $('#ddlStatusS').val('');
+            homeController.loadData(true);
+        });
+        $('.btn-edit').off('click').on('click', function () {
+            var id = $(this).data('id');
+            $('#modalAddUpdate').modal('show');           
+            homeController.loadDetail(id);
+        });
+        $('.btn-delete').off('click').on('click', function () {
+            var id = $(this).data('id');
+            bootbox.confirm("Are you sure to delete this product?", function (result) {
+                
+                homeController.deleteProduct(id);
+            });
+        });
+    },
+    deleteProduct:function(id){
+        $.ajax({
+            url: '/Product/Delete',
+            data: {
+                id: id
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if (response.status == true) {
+                    bootbox.alert("Delete success.", function () {
+                        homeController.loadData(true);
+                    });
+
+                }
+                else {
+                    alert(response.message);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
     },
     saveData: function(){
         var name = $('#txtName').val();
@@ -61,13 +117,15 @@ var homeController = {
             type: 'POST',
             dataType: 'json',
             success: function (response) {
-                if (status == true) {
-                    alert('Save success');
-                    $('#modalAddUpdate').modal('hide');
-                    homeController.loadData();
+                if (response.status == true) {
+                    bootbox.alert("Save success.", function () {
+                        $('#modalAddUpdate').modal('hide');
+                        homeController.loadData(true);
+                    });
+                   
                 }
                 else {
-                    alert(response.Message);
+                    bootbox.alert(response.message);
                 }
             },
             error: function (err) {
@@ -101,20 +159,56 @@ var homeController = {
             success:function(response){
                 if (response.status)
                 {
-                    alert('Update successed.');
+                    bootbox.alert("Update Success");
                 }
                 else
                 {
-                    alert('Update failed.');
+                    bootbox.alert(response.message);
                 }
             }
         })
     },
-    loadData: function () {
+    loadDetail: function (id) {
+        $.ajax({
+            url: '/Product/GetDetail',
+            data: {
+                id:id
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.status == true) {
+                    var data= response.data
+                    $('#hidID').val(data.ID);
+                    $('#txtName').val(data.Name);
+                    $('#txtCode').val(data.Code);
+                    $('#txtMetaTitle').val(data.MetaTitle);
+                    $('#txtDescription').val(data.Description);
+                    $('#txtImage').val(data.Image);
+                    $('#txtMoreImages').val(data.MoreImages);
+                    $('#txtPrice').val(data.Price);
+                    $('#txtPromotionPrice').val(data.PromotionPrice);
+                    $('#txtCategoryID').val(data.CategoryID);
+                    $('#ckStatus').prop('checked', data.Status);
+                }
+                else {
+                    bootbox.alert(response.message);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    },
+    loadData: function (changePageSize) {
+        var name =$('#txtNameS').val();
+        var status = $('#ddlStatusS').val();
         $.ajax({
             url: '/Product/LoadData',
             type: 'GET',
             data: {
+                name:name,
+                status:status,
                 page: homeconfig.pageIndex,
                 pageSize: homeconfig.pageSize
             },
@@ -135,14 +229,21 @@ var homeController = {
                     $('#tblData').html(html);
                     homeController.paging(response.total, function () {
                         homeController.loadData();
-                    });
+                    }, changePageSize);
                     homeController.registerEvent();
                 }
             }
         })
     },
-    paging: function (totalRow, callback) {
+    paging: function (totalRow, callback,changePageSize) {
         var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
+
+        if ($('#pagination a').length === 0 || changePageSize === true) {
+            $('#pagination').empty();
+            $('#pagination').removeData("twbs-pagination");
+            $('#pagination').unbind("page");
+        }
+
         $('#pagination').twbsPagination({
             totalPages: totalPage,
             first: "Đầu",

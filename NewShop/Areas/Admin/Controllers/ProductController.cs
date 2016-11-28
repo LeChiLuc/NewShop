@@ -60,19 +60,39 @@ namespace NewShop.Areas.Admin.Controllers
         }
       
         [HttpGet]
-        public JsonResult LoadData(int page,int pageSize=1)  
+        public JsonResult LoadData(string name,string status,int page,int pageSize=1)  
         {
-            var model = db.Products
-                .OrderByDescending(x=>x.CreatedDate)
+            IQueryable<Product> model = db.Products;
+
+            if (!string.IsNullOrEmpty(name))
+                model = model.Where(x => x.Name.Contains(name));
+            if(!string.IsNullOrEmpty(status))
+            {
+                var statusBool = bool.Parse(status);
+                model = model.Where(x => x.Status == statusBool);
+            }
+            int totalRow = model.Count();
+            model =model.OrderByDescending(x=>x.CreatedDate)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize);
-            int totalRow = db.Products.Count();
+            
             return Json(new
             {
                 data = model,
                 total = totalRow,
                 status=true
             },JsonRequestBehavior.AllowGet);
+        }
+       
+        [HttpGet]
+        public JsonResult GetDetail(int id)
+        {
+            var product = db.Products.Find(id);
+            return Json(new
+            {
+                data = product,
+                status = true
+            }, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult SaveData(string strProduct)
@@ -128,6 +148,27 @@ namespace NewShop.Areas.Admin.Controllers
                 status = status,
                 message = message
             });
+        }
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {           
+            var entity = db.Products.Find(id);
+            db.Products.Remove(entity);
+            try
+            {
+                db.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }catch(Exception ex)
+            {
+                return Json(new
+                {
+                    status = false,
+                    message=ex.Message
+                });
+            }
         }
 
         [HttpPost]

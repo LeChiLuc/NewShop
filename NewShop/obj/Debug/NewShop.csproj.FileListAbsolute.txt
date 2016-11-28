@@ -69,3 +69,5 @@ E:\_Hoctap\_Project\_MyProjects\Git\NewShop\NewShop\bin\Microsoft.Owin.Security.
 E:\_Hoctap\_Project\_MyProjects\Git\NewShop\NewShop\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 E:\_Hoctap\_Project\_MyProjects\Git\NewShop\NewShop\obj\Debug\NewShop.dll
 E:\_Hoctap\_Project\_MyProjects\Git\NewShop\NewShop\obj\Debug\NewShop.pdb
+E:\_Hoctap\_Project\_MyProjects\Git\NewShop\NewShop\bin\CKFinder.dll
+E:\_Hoctap\_Project\_MyProjects\Git\NewShop\NewShop\bin\CKFinder.pdb

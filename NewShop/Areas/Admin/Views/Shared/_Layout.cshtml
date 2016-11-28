@@ -578,9 +578,13 @@
     <!-- AdminLTE App -->
     <script src="/Assets/admin/dist/js/app.min.js"></script>
     <!-- AdminLTE for demo purposes -->
+    <script src="~/Assets/admin/plugins/ckfinder/ckfinder.js"></script>
     <script src="/Assets/admin/dist/js/demo.js"></script>
-    <script src="~/Assets/admin/js/homeController/mustache.js"></script>
+    <script src="~/Assets/admin/plugins/bootbox.min.js"></script>
+    <script src="~/Assets/admin/js/homeController/mustache.js"></script>    
     <script src="~/Assets/admin/plugins/jquery.twbsPagination.min.js"></script>
-    <script src="~/Assets/admin/js/homeController/homeController.js"></script>
+    
+    
+    @RenderSection("Script",required:false)
 </body>
 </html>
