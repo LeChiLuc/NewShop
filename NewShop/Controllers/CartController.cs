@@ -1,4 +1,5 @@
 ﻿using Model.Dao;
+using Model.EF;
 using NewShop.Models;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,24 @@ namespace NewShop.Controllers
                 list = (List<CartItem>)cart;
             }
             return View(list);
+        }
+        public JsonResult DeleteAll()
+        {
+            Session[CartSession] =null;
+            return Json(new
+            {
+                status = true
+            });
+        }
+        public JsonResult Delete(long id)
+        {
+            var sessionCart = (List<CartItem>)Session[CartSession];
+            sessionCart.RemoveAll(x => x.Product.ID == id);
+            Session[CartSession] = sessionCart;
+            return Json(new
+            {
+                status = true
+            });
         }
         public JsonResult Update(string cartModel){
             var jsonCart = new JavaScriptSerializer().Deserialize<List<CartItem>>(cartModel);
@@ -83,6 +102,52 @@ namespace NewShop.Controllers
                 Session[CartSession] = list;
             }
             return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public ActionResult Payment()
+        {
+            var cart = Session[CartSession];
+            var list = new List<CartItem>();
+            if (cart != null)
+            {
+                list = (List<CartItem>)cart;
+            }
+            return View(list);
+        }
+        [HttpPost]
+        public ActionResult Payment(string shipName,string mobile,string address,string email)
+        {
+            var order = new Order();
+            order.CreatedDate = DateTime.Now;
+            order.ShipName = shipName;
+            order.ShipMobile = mobile;
+            order.ShipAddress = address;
+            order.ShipEmail = email;
+
+            try
+            {
+                var id = new OrderDao().Insert(order);
+                var cart = (List<CartItem>)Session[CartSession];
+                var detailDao = new OrderDetailDao();
+                foreach (var item in cart)
+                {
+                    var orderDetail = new OrderDetail();
+                    orderDetail.ProductID = item.Product.ID;
+                    orderDetail.OrderID = id;
+                    orderDetail.Price = item.Product.Price;
+                    orderDetail.Quantity = item.Quantity;
+                    detailDao.Insert(orderDetail);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Redirect("/loi-thanh-toan");
+            }
+            return Redirect("/hoan-thanh");
+        }
+        public ActionResult Success()
+        {
+            return View();
         }
     }
 }
