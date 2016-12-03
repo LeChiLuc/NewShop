@@ -4,14 +4,13 @@
 }
 var homeController = {
     init: function () {
-       
+
         homeController.loadData();
         homeController.registerEvent();
     },
-    registerEvent:function(){
+    registerEvent: function () {
         $('.txtSalary').off('keypress').on('keypress', function (e) {
-            if(e.which==13)
-            {
+            if (e.which == 13) {
                 var id = $(this).data('id');
                 var value = $(this).val();
 
@@ -31,6 +30,10 @@ var homeController = {
             };
             finder.popup();
         });
+        var editor = CKEDITOR.replace('txtContent', {
+            customConfig: '/Assets/admin/plugins/ckeditor/config.js'
+        })
+
         $('#btnAddNew').off('click').on('click', function () {
             $('#modalAddUpdate').modal('show');
             homeController.resetForm();
@@ -48,18 +51,18 @@ var homeController = {
         });
         $('.btn-edit').off('click').on('click', function () {
             var id = $(this).data('id');
-            $('#modalAddUpdate').modal('show');           
+            $('#modalAddUpdate').modal('show');
             homeController.loadDetail(id);
         });
         $('.btn-delete').off('click').on('click', function () {
             var id = $(this).data('id');
             bootbox.confirm("Are you sure to delete this product?", function (result) {
-                
+
                 homeController.deleteProduct(id);
             });
         });
     },
-    deleteProduct:function(id){
+    deleteProduct: function (id) {
         $.ajax({
             url: '/Product/Delete',
             data: {
@@ -83,7 +86,7 @@ var homeController = {
             }
         })
     },
-    saveData: function(){
+    saveData: function () {
         var name = $('#txtName').val();
         var code = $('#txtCode').val();
         var metaTitle = $('#txtMetaTitle').val();
@@ -112,7 +115,7 @@ var homeController = {
         $.ajax({
             url: '/Product/SaveData',
             data: {
-              strProduct: JSON.stringify(product)
+                strProduct: JSON.stringify(product)
             },
             type: 'POST',
             dataType: 'json',
@@ -122,7 +125,7 @@ var homeController = {
                         $('#modalAddUpdate').modal('hide');
                         homeController.loadData(true);
                     });
-                   
+
                 }
                 else {
                     bootbox.alert(response.message);
@@ -133,7 +136,7 @@ var homeController = {
             }
         })
     },
-    resetForm:function(){
+    resetForm: function () {
         $('#hidID').val('0');
         $('#txtName').val('');
         $('#txtCode').val('');
@@ -155,14 +158,12 @@ var homeController = {
             url: '/Product/Update',
             type: 'POST',
             dataType: 'json',
-            data: {model:JSON.stringify(data)},
-            success:function(response){
-                if (response.status)
-                {
+            data: { model: JSON.stringify(data) },
+            success: function (response) {
+                if (response.status) {
                     bootbox.alert("Update Success");
                 }
-                else
-                {
+                else {
                     bootbox.alert(response.message);
                 }
             }
@@ -172,13 +173,13 @@ var homeController = {
         $.ajax({
             url: '/Product/GetDetail',
             data: {
-                id:id
+                id: id
             },
             type: 'GET',
             dataType: 'json',
             success: function (response) {
                 if (response.status == true) {
-                    var data= response.data
+                    var data = response.data
                     $('#hidID').val(data.ID);
                     $('#txtName').val(data.Name);
                     $('#txtCode').val(data.Code);
@@ -201,29 +202,29 @@ var homeController = {
         })
     },
     loadData: function (changePageSize) {
-        var name =$('#txtNameS').val();
+        var name = $('#txtNameS').val();
         var status = $('#ddlStatusS').val();
         $.ajax({
             url: '/Product/LoadData',
             type: 'GET',
             data: {
-                name:name,
-                status:status,
+                name: name,
+                status: status,
                 page: homeconfig.pageIndex,
                 pageSize: homeconfig.pageSize
             },
             dataType: 'json',
             success: function (response) {
                 if (response.status) {
-                    var data =response.data;
-                    var html='';
+                    var data = response.data;
+                    var html = '';
                     var template = $('#data-template').html();
                     $.each(data, function (i, item) {
                         html += Mustache.render(template, {
                             ID: item.ID,
                             Name: item.Name,
                             Price: item.Price,
-                            Status: item.Status==true?"<span class=\"label label-success\">Actived</span>":"<span class=\"label label-warning\">Locked</span>"
+                            Status: item.Status == true ? "<span class=\"label label-success\">Actived</span>" : "<span class=\"label label-warning\">Locked</span>"
                         })
                     });
                     $('#tblData').html(html);
@@ -235,7 +236,7 @@ var homeController = {
             }
         })
     },
-    paging: function (totalRow, callback,changePageSize) {
+    paging: function (totalRow, callback, changePageSize) {
         var totalPage = Math.ceil(totalRow / homeconfig.pageSize);
 
         if ($('#pagination a').length === 0 || changePageSize === true) {

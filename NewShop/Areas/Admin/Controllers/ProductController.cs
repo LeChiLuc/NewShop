@@ -9,7 +9,7 @@ using System.Web.Script.Serialization;
 
 namespace NewShop.Areas.Admin.Controllers
 {
-    public class ProductController : Controller
+    public class ProductController : BaseController
     {
         //List<ProductModel> listProduct = new List<ProductModel>()
         //{

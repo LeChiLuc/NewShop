@@ -39,6 +39,8 @@ namespace Model.EF
 
         public long? CategoryID { get; set; }
 
+        public int? MenuID { set; get; }
+
         [Column(TypeName = "ntext")]
         public string Detail { get; set; }
 

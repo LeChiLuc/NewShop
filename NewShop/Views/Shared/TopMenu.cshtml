@@ -1,0 +1,18 @@
+﻿@model List<Model.EF.Menu>
+<div class="header-top">
+    <div class="container">
+        <div class="top-left">
+            <a href="#"> Help  <i class="glyphicon glyphicon-phone" aria-hidden="true"></i> +0123-456-789</a>
+        </div>
+        <div class="top-right">
+            <ul>
+                @foreach (var item in Model)
+                {
+                    <li><a href="@item.Link" target="@item.Target">@item.Text</a></li>
+                }
+             
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

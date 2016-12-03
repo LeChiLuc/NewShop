@@ -8,7 +8,7 @@ using System.Web.Script.Serialization;
 
 namespace NewShop.Areas.Admin.Controllers
 {
-    public class ProductCategoryController : Controller
+    public class ProductCategoryController : BaseController
     {
         private NewShopDbContext db;
         public ProductCategoryController()
